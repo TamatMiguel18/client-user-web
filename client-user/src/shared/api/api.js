@@ -20,4 +20,9 @@ api.interceptors.response.use(
   }
 );
 
+export const getUsuarios = () => api.get('/users');
+export const saveUsuario = (data) => api.post('/users/create', data);
+export const updateUsuario = (id, data) => api.put(`/users/update/${id}`, data);
+export const deactivateUsuario = (id) => api.patch(`/users/deactivate/${id}`);
+
 export default api;
