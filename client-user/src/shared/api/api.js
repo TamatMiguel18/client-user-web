@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use env variable, but if it incorrectly includes /user at the end, replace it.
-let baseURL = import.meta.env.VITE_USER_URL || 'http://localhost:3001/smartgrowgt/v1';
+let baseURL = import.meta.env.VITE_USER_URL || 'http://localhost:3002/smartgrowgt/v1';
 baseURL = baseURL.replace(/\/user\/?$/, '');
 
 const api = axios.create({
@@ -20,9 +20,10 @@ api.interceptors.response.use(
   }
 );
 
-export const getUsuarios = () => api.get('/users');
-export const saveUsuario = (data) => api.post('/users/create', data);
-export const updateUsuario = (id, data) => api.put(`/users/update/${id}`, data);
-export const deactivateUsuario = (id) => api.patch(`/users/deactivate/${id}`);
+// export const getUsuarios = () => api.get('/'); 
+export const getUserById = (id) => api.get(`/usuarios/${id}`); // GET /smartgrowgt/v1/usuarios/:id
+export const saveUsuario = (data) => api.post('/usuarios/create', data); // POST /smartgrowgt/v1/usuarios/create
+export const updateUsuario = (id, data) => api.put(`/usuarios/update/${id}`, data);
+export const deactivateUsuario = (id) => api.patch(`/usuarios/deactivate/${id}`);
 
 export default api;
