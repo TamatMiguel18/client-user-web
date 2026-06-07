@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle } from 'lucide-react';
+import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, AlertCircle } from 'lucide-react';
 
 export const UserLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -10,6 +10,7 @@ export const UserLayout = () => {
     { name: 'Fertilizantes', path: '/fertilizers', icon: <FlaskConical size={20} /> },
     { name: 'Recomendaciones', path: '/recommendations', icon: <Calculator size={20} /> },
     { name: 'Mis Parcelas', path: '/fields', icon: <Map size={20} /> },
+    { name: 'Reportes', path: '/reports', icon: <AlertCircle size={20} /> },
   ];
 
   return (
@@ -30,10 +31,9 @@ export const UserLayout = () => {
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
-                    `px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
-                      isActive 
-                        ? 'bg-white/10 text-white' 
-                        : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                    `px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${isActive
+                      ? 'bg-white/10 text-white'
+                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
                     }`
                   }
                 >
@@ -71,10 +71,9 @@ export const UserLayout = () => {
                   to={item.path}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `block px-3 py-2 rounded-md text-base font-medium flex items-center gap-3 ${
-                      isActive 
-                        ? 'bg-white/10 text-white' 
-                        : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                    `block px-3 py-2 rounded-md text-base font-medium flex items-center gap-3 ${isActive
+                      ? 'bg-white/10 text-white'
+                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
                     }`
                   }
                 >
@@ -91,7 +90,7 @@ export const UserLayout = () => {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
         <Outlet />
       </main>
-      
+
       <footer className="bg-[#020617] border-t border-white/5 py-6 mt-auto">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500">
           &copy; {new Date().getFullYear()} SmartGrow. Todos los derechos reservados.
