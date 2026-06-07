@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle } from 'lucide-react';
+import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, AlertTriangle } from 'lucide-react';
 
 export const UserLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -8,6 +8,7 @@ export const UserLayout = () => {
   const navItems = [
     { name: 'Cultivos', path: '/crops', icon: <Leaf size={20} /> },
     { name: 'Fertilizantes', path: '/fertilizers', icon: <FlaskConical size={20} /> },
+    { name: 'Alertas', path: '/alerts', icon: <AlertTriangle size={20} /> },
     { name: 'Recomendaciones', path: '/recommendations', icon: <Calculator size={20} /> },
     { name: 'Mis Parcelas', path: '/fields', icon: <Map size={20} /> },
   ];

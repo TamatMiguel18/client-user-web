@@ -5,6 +5,7 @@ import { CropsList } from '../../features/crops/components/CropsList';
 import { FertilizersList } from '../../features/fertilizers/components/FertilizersList';
 import { FieldsManager } from '../../features/fields/components/FieldsManager';
 import { FertilityForm } from '../../features/fertility/components/FertilityForm';
+import { AlertsList } from '../../features/alerts/components/AlertsList';
 
 export const AppRouter = () => {
   return (
@@ -17,6 +18,7 @@ export const AppRouter = () => {
         <Route path="fertilizers" element={<FertilizersList />} />
         <Route path="fields" element={<FieldsManager />} />
         <Route path="recommendations" element={<FertilityForm />} />
+        <Route path="alerts" element={<AlertsList />} />
         
         {/* Catch all route */}
         <Route path="*" element={<Navigate to="/crops" replace />} />
