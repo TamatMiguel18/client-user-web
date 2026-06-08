@@ -10,10 +10,10 @@ import { Sprout, ShieldCheck, Map, Smartphone } from "lucide-react";
 export const AuthPage = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [isForgot, setIsForgot] = useState(false);
-    
+
     const [searchParams] = useSearchParams();
     const isReset = searchParams.has("token");
-    
+
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const checkAuth = useAuthStore(state => state.checkAuth);
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ export const AuthPage = () => {
     useEffect(() => {
         checkAuth();
         if (isAuthenticated) {
-            navigate("/dashboard");
+            navigate("/dashboard/fields");
         }
     }, [isAuthenticated, navigate, checkAuth]);
 
@@ -58,11 +58,11 @@ export const AuthPage = () => {
             </div>
 
             <div className={`relative w-full max-w-[1200px] bg-slate-950/80 backdrop-blur-3xl border border-white/5 rounded-[3.5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500 ease-in-out ${!isLogin && !isForgot && !isReset ? "h-auto min-h-[850px]" : "min-h-[700px]"}`}>
-                
+
                 {/* Panel Izquierdo (Branding / Info) */}
                 <div className="lg:w-[45%] relative overflow-hidden hidden lg:flex flex-col justify-between p-16 border-r border-white/5">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-emerald-500/5" />
-                    
+
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-12">
                             <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center p-1 border-2 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
@@ -119,12 +119,12 @@ export const AuthPage = () => {
                         </div>
 
                         <div className="bg-slate-900/50 border border-white/10 rounded-[2rem] p-8 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)] backdrop-blur-md">
-                            {isReset 
-                                ? <ResetPasswordForm onLogin={handleGoToLogin} /> 
-                                : isForgot 
-                                    ? <ForgotForm /> 
-                                    : isLogin 
-                                        ? <LoginForm onForgot={() => setIsForgot(true)} /> 
+                            {isReset
+                                ? <ResetPasswordForm onLogin={handleGoToLogin} />
+                                : isForgot
+                                    ? <ForgotForm />
+                                    : isLogin
+                                        ? <LoginForm onForgot={() => setIsForgot(true)} />
                                         : <RegisterForm onLogin={handleGoToLogin} />}
 
                             {!isReset && !isForgot && (
