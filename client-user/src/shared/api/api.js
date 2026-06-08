@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use env variable, but if it incorrectly includes /user at the end, replace it.
-let baseURL = import.meta.env.VITE_USER_URL || 'http://localhost:3001/smartgrowgt/v1';
+let baseURL = import.meta.env.VITE_USER_URL || 'http://localhost:3002/smartgrowgt/v1';
 baseURL = baseURL.replace(/\/user\/?$/, '');
 
 const api = axios.create({
