@@ -5,7 +5,7 @@ import { Button } from '../../../shared/components/ui/Button';
 import { Loader } from '../../../shared/components/ui/Loader';
 import { FieldFormModal } from './FieldFormModal';
 import { FieldDetailsModal } from './FieldDetailsModal';
-import { Map, MapPin, Ruler, Layers, Plus, Trash2, Edit2, Eye, Power } from 'lucide-react';
+import { Map, MapPin, Ruler, Layers, Plus, Trash2, Edit2, Eye, Power, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export const FieldsManager = () => {
@@ -138,6 +138,20 @@ export const FieldsManager = () => {
                 <div className="flex items-center gap-2 text-slate-400">
                   <MapPin size={18} className="text-rose-400" />
                   <span className="text-sm truncate" title={field.location}>{field.location}</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-400">
+                  <Activity size={18} className={
+                    field.healthStatus === 'Saludable' || !field.healthStatus ? 'text-emerald-400' : 
+                    field.healthStatus === 'En Riesgo' ? 'text-amber-400' : 
+                    'text-rose-500'
+                  } />
+                  <span className="text-sm font-medium text-slate-300">
+                    Salud: <span className={
+                      field.healthStatus === 'Saludable' || !field.healthStatus ? 'text-emerald-400 font-bold' : 
+                      field.healthStatus === 'En Riesgo' ? 'text-amber-400 font-bold' : 
+                      'text-rose-500 font-bold'
+                    }>{field.healthStatus || 'Saludable'}</span>
+                  </span>
                 </div>
               </div>
 

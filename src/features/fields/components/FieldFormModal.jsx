@@ -6,17 +6,27 @@ import { Button } from '../../../shared/components/ui/Button';
 
 import { useCropStore } from '../../crops/store/useCropStore';
 import { useAuthStore } from '../../auth/store/authStore';
+import { useDevicesStore } from '../../devices/store/devicesStore';
 
 export const FieldFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
   const { crops, fetchCrops } = useCropStore();
+  const { devices, hasFetched, fetchUserDevices } = useDevicesStore();
 
   // Estado para controlar la pestaña activa
   const [activeTab, setActiveTab] = useState('general');
 
+  const currentUserId = initialData?.user || useAuthStore.getState().user?.uid || useAuthStore.getState().user?.id || localStorage.getItem('userId');
+
   useEffect(() => {
     fetchCrops();
   }, [fetchCrops]);
+
+  useEffect(() => {
+    if (!hasFetched && currentUserId) {
+      fetchUserDevices(currentUserId);
+    }
+  }, [hasFetched, currentUserId, fetchUserDevices]);
 
   useEffect(() => {
     if (isOpen) {
@@ -25,6 +35,7 @@ export const FieldFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
       reset(initialData ? {
         ...initialData,
         crop: initialData.crop?._id || initialData.crop?.id || initialData.crop || '',
+        deviceId: initialData.deviceId?._id || initialData.deviceId?.id || initialData.deviceId || '',
         // Mapeamos los valores existentes o asignamos los defaults del esquema
         soilData: {
           cc: initialData.soilData?.cc ?? 0,
@@ -46,6 +57,7 @@ export const FieldFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         location: '',
         area: '',
         crop: '',
+        deviceId: '',
         soilData: { cc: 0, pmp: 0, zr: 0, ur: 0, dap: 0, ib: 0, qest: 0 },
         soilAnalysis: { nitrogen: 0, phosphorus: 0, potassium: 0, pH: 7 }
       });
@@ -53,13 +65,11 @@ export const FieldFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   }, [isOpen, initialData, reset]);
 
   const handleFormSubmit = async (data) => {
-    // 💡 Conectamos con tu useAuthStore para obtener el ID real en lugar de harcodear un '1'
-    const currentUserId = initialData?.user || useAuthStore.getState().user?.id || localStorage.getItem('userId');
-
     const formattedData = {
       ...data,
       area: Number(data.area),
       user: String(currentUserId), // Mongoose lo espera como String según tu esquema
+      deviceId: data.deviceId || null,
       soilData: {
         cc: Number(data.soilData.cc),
         pmp: Number(data.soilData.pmp),
@@ -166,6 +176,20 @@ export const FieldFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                 </select>
                 {errors.crop && <p className="mt-1 text-sm text-rose-400">{errors.crop.message}</p>}
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Dispositivo Asociado (Opcional)</label>
+              <select
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 text-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 focus:outline-none"
+                {...register('deviceId')}
+              >
+                <option value="">Ninguno</option>
+                {devices?.map(d => (
+                  <option key={d._id} value={d._id}>{d.name} ({d.deviceId})</option>
+                ))}
+              </select>
+              {errors.deviceId && <p className="mt-1 text-sm text-rose-400">{errors.deviceId.message}</p>}
             </div>
           </div>
         )}
