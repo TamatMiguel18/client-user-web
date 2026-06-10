@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getReports, getReportsBad, getReportsById, getReportsByField, getReportsByDevice } from '../api/reports.api';
+import { getReportsByUser, getReportsBad, getReportsById, getReportsByField, getReportsByDevice } from '../api/reports.api';
 
 export const useReportsStore = create((set) => ({
     reports: [],
@@ -7,10 +7,11 @@ export const useReportsStore = create((set) => ({
     error: null,
 
     // Obtener todos los reportes
-    fetchReports: async () => {
+    fetchReports: async (userId) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await getReports();
+            if (!userId) throw new Error('Usuario no identificado');
+            const response = await getReportsByUser(userId);
             // Assuming response contains { data: [...] } or just [...]
             set({ reports: response.data || response, isLoading: false });
         } catch (error) {

@@ -5,19 +5,27 @@ import { Loader } from '../../../shared/components/ui/Loader';
 import { Search, ClipboardList, AlertCircle } from 'lucide-react';
 import { Input } from '../../../shared/components/ui/Input';
 
+import { useAuthStore } from '../../auth/store/authStore';
+
 export const ReportsList = () => {
     // Consumimos el estado global de reportes
     const { reports, isLoading, error, fetchReports } = useReportsStore();
+    const { user } = useAuthStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterAlert, setFilterAlert] = useState('all'); // Filtro extra por estado ('all', 'bien', 'mal')
 
+    const currentUserId = user?.uid || user?.id || user?._id || localStorage.getItem('userId');
+
     useEffect(() => {
-        fetchReports();
-    }, [fetchReports]);
+        if (currentUserId) {
+            fetchReports(currentUserId);
+        }
+    }, [fetchReports, currentUserId]);
 
     // Filtrado inteligente: Por nombre de cultivo y opcionalmente por tipo de alerta
     const filteredReports = reports?.filter(report => {
-        const matchesSearch = report.nombreCultivo?.toLowerCase().includes(searchTerm.toLowerCase());
+        const fieldName = report.fieldId?.name || report.nombreCultivo || '';
+        const matchesSearch = fieldName.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesAlert = filterAlert === 'all' || report.alertType === filterAlert;
 
         return matchesSearch && matchesAlert;
@@ -30,7 +38,7 @@ export const ReportsList = () => {
             <div className="bg-rose-500/10 text-rose-400 p-4 rounded-xl text-center border border-rose-500/20 max-w-md mx-auto">
                 <p className="font-medium">{error}</p>
                 <button
-                    onClick={fetchReports}
+                    onClick={() => fetchReports(currentUserId)}
                     className="mt-2 text-sm underline hover:text-rose-300 transition-colors"
                 >
                     Reintentar cargar reportes

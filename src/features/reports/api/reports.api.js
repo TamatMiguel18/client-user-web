@@ -1,8 +1,8 @@
 import api from "../../../shared/api/api";
 
-// Obtener todos los reportes
-export const getReports = async () => {
-    return await api.get("/reports");
+// Obtener todos los reportes del usuario
+export const getReportsByUser = async (userId) => {
+    return await api.get(`/reports/user/${userId}`);
 };
 
 // Obtener reportes malos

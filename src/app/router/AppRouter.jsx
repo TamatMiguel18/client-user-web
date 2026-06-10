@@ -9,6 +9,7 @@ import { ProductsList } from '../../features/products/components/ProductsList';
 import { VerifyEmail } from '../../features/auth/pages/VerifyEmail';
 import { AuthPage } from '../../features/auth/pages/AuthPage';
 import { ReportsList } from '../../features/reports/components/Reports';
+import { AlertsList } from '../../features/alerts/components/AlertsList';
 
 export const AppRouter = () => {
   return (
@@ -29,6 +30,8 @@ export const AppRouter = () => {
         <Route path="products" element={<ProductsList />} />
 
         <Route path="reports" element={<ReportsList />} />
+        <Route path="alerts" element={<AlertsList />} />
+        
         {/* Catch all route */}
         <Route path="*" element={<Navigate to="/fields" replace />} />
       </Route>

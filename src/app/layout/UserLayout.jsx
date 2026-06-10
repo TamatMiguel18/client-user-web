@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, LogOut, ChevronDown, Package, ShoppingCart, Cpu, AlertCircle } from 'lucide-react';
+import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, LogOut, ChevronDown, Package, ShoppingCart, Cpu, AlertCircle, AlertTriangle } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/store/authStore';
 import { useDevicesStore } from '../../features/devices/store/devicesStore';
 import imgLogo from '../../assets/smartGrowGt_Logo.png';
@@ -106,7 +106,8 @@ export const UserLayout = () => {
     { name: 'Productos', path: '/products', icon: <Package size={20} /> },
     { name: 'Mis Parcelas', path: '/fields', icon: <Map size={20} /> },
     { name: 'Fertilizantes', path: '/fertilizers', icon: <FlaskConical size={20} /> },
-    { name: 'Reportes', path: '/reports', icon: <AlertCircle size={20} /> }
+    { name: 'Reportes', path: '/reports', icon: <AlertCircle size={20} /> },
+    { name: 'Alertas', path: '/alerts', icon: <AlertTriangle size={20} /> }
   ];
 
   const handleLogout = () => {
@@ -157,8 +158,8 @@ export const UserLayout = () => {
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex space-x-1">
-              {navItems.map((item) => (
+            <div className="hidden lg:flex flex-1 justify-center space-x-1">
+              {navItems.slice(0, 4).map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
@@ -198,7 +199,7 @@ export const UserLayout = () => {
             </button>
 
             {/* Profile Dropdown */}
-            <div className="hidden md:flex items-center gap-4" ref={dropdownRef}>
+            <div className="hidden lg:flex items-center gap-4" ref={dropdownRef}>
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -226,18 +227,23 @@ export const UserLayout = () => {
                       <p className="text-xs text-slate-400 truncate font-light">{user?.email}</p>
                     </div>
                     <ul className="p-2 space-y-1">
-                      <li>
-                        <button
-                          onClick={() => {
-                            setIsProfileOpen(false);
-                            setIsCartModalOpen(true);
-                          }}
-                          className="flex items-center gap-3 w-full p-3 rounded-2xl text-slate-400 hover:bg-slate-500/20 hover:text-slate-500 transition-all duration-200 group"
-                        >
-                          <ShoppingCart size={18} className="group-hover:translate-x-1 transition-transform" />
-                          <span className="text-sm font-bold">Carrito</span>
-                        </button>
-                      </li>
+                      {navItems.slice(4).map((item) => (
+                        <li key={item.path}>
+                          <button
+                            onClick={() => {
+                              setIsProfileOpen(false);
+                              navigate(item.path);
+                            }}
+                            className="flex items-center gap-3 w-full p-3 rounded-2xl text-slate-400 hover:bg-slate-500/20 hover:text-slate-500 transition-all duration-200 group"
+                          >
+                            <div className="group-hover:translate-x-1 transition-transform">
+                              {React.cloneElement(item.icon, { size: 18 })}
+                            </div>
+                            <span className="text-sm font-bold">{item.name}</span>
+                          </button>
+                        </li>
+                      ))}
+                      <div className="h-px bg-white/5 my-1" />
                       <li>
                         <button
                           onClick={handleLogout}
@@ -254,7 +260,7 @@ export const UserLayout = () => {
             </div>
 
             {/* Mobile Shopping Cart and menu button */}
-            <div className="md:hidden flex items-center gap-2">
+            <div className="lg:hidden flex items-center gap-2">
               <button
                 onClick={() => setIsDeviceModalOpen(true)}
                 className="relative p-2 rounded-full text-slate-400 hover:text-white hover:bg-[#062452] focus:outline-none flex items-center justify-center"
@@ -284,7 +290,7 @@ export const UserLayout = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-[#062452] shadow-lg absolute w-full z-50">
+          <div className="lg:hidden bg-[#062452] shadow-lg absolute w-full z-50">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {navItems.map((item) => (
                 <NavLink
@@ -331,7 +337,7 @@ export const UserLayout = () => {
         </div>
       </footer>
 
-      <CartModal 
+      <CartModal
         isOpen={isCartModalOpen}
         onClose={() => setIsCartModalOpen(false)}
         cart={cart}
@@ -342,16 +348,16 @@ export const UserLayout = () => {
 
       {/* Device Registration Modals */}
       {hasFetched && devices.length === 0 && (
-        <DeviceRegisterModal 
-          isOpen={true} 
-          isDismissible={false} 
+        <DeviceRegisterModal
+          isOpen={true}
+          isDismissible={false}
         />
       )}
 
-      <DeviceRegisterModal 
-        isOpen={isDeviceModalOpen} 
-        onClose={() => setIsDeviceModalOpen(false)} 
-        isDismissible={true} 
+      <DeviceRegisterModal
+        isOpen={isDeviceModalOpen}
+        onClose={() => setIsDeviceModalOpen(false)}
+        isDismissible={true}
       />
     </div>
   );

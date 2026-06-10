@@ -4,7 +4,8 @@ import { Droplet, ThermometerSun, Leaf } from 'lucide-react';
 
 export const ReportCard = ({ report }) => {
     // Desestructuramos los datos del reporte (vienen de tu esquema de Mongoose)
-    const { nombreCultivo, humidity, temperature, alertType, createdAt } = report;
+    const { humidity, temperature, alertType, createdAt } = report;
+    const nombreCultivo = report.fieldId?.name || report.nombreCultivo || 'Cultivo Desconocido';
 
     // Formateamos la fecha de creación de manera limpia (ej: "06 jun, 14:00")
     const fechaFormateada = createdAt
