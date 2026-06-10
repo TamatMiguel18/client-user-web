@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  --color-main-blue: #08316d;
+}
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  --main-blue: #08316d;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #020617; /* Dark background like admin */
+  color: #e2e8f0; /* text-slate-200 */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.15s ease-out;
+}
+
+/* Base styles for modern cards matching admin */
+.glass-card {
+  background: rgba(15, 23, 42, 0.4); /* bg-slate-900/40 */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.05); /* border-white/5 */
+  border-radius: 2.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+}
