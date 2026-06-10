@@ -8,6 +8,7 @@ import { FertilityForm } from '../../features/fertility/components/FertilityForm
 import { ProductsList } from '../../features/products/components/ProductsList';
 import { VerifyEmail } from '../../features/auth/pages/VerifyEmail';
 import { AuthPage } from '../../features/auth/pages/AuthPage';
+import { ReportsList } from '../../features/reports/components/Reports';
 
 export const AppRouter = () => {
   return (
@@ -20,11 +21,14 @@ export const AppRouter = () => {
         <Route index element={<Navigate to="/fields" replace />} />
 
         <Route path="fields" element={<FieldsManager />} />
+        <Route index element={<Navigate to="/crops" replace />} />
+
         <Route path="crops" element={<CropsList />} />
         <Route path="fertilizers" element={<FertilizersList />} />
         <Route path="recommendations" element={<FertilityForm />} />
         <Route path="products" element={<ProductsList />} />
 
+        <Route path="reports" element={<ReportsList />} />
         {/* Catch all route */}
         <Route path="*" element={<Navigate to="/fields" replace />} />
       </Route>

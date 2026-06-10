@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, LogOut, ChevronDown, Package, ShoppingCart, Cpu } from 'lucide-react';
+import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, LogOut, ChevronDown, Package, ShoppingCart, Cpu, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/store/authStore';
 import { useDevicesStore } from '../../features/devices/store/devicesStore';
 import imgLogo from '../../assets/smartGrowGt_Logo.png';
@@ -105,7 +105,8 @@ export const UserLayout = () => {
     { name: 'Recomendaciones', path: '/recommendations', icon: <Calculator size={20} /> },
     { name: 'Productos', path: '/products', icon: <Package size={20} /> },
     { name: 'Mis Parcelas', path: '/fields', icon: <Map size={20} /> },
-    { name: 'Fertilizantes', path: '/fertilizers', icon: <FlaskConical size={20} /> }
+    { name: 'Fertilizantes', path: '/fertilizers', icon: <FlaskConical size={20} /> },
+    { name: 'Reportes', path: '/reports', icon: <AlertCircle size={20} /> }
   ];
 
   const handleLogout = () => {
