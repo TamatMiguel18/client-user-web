@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, LogOut, ChevronDown, Package, ShoppingCart } from 'lucide-react';
+import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, LogOut, ChevronDown, Package, ShoppingCart, Cpu } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/store/authStore';
+import { useDevicesStore } from '../../features/devices/store/devicesStore';
 import imgLogo from '../../assets/smartGrowGt_Logo.png';
 import defaultAvatarImg from '../../assets/user_icon.png';
 import { getCart, updateCartItem, removeFromCart, createOrder } from '../../shared/api';
 import { CartModal } from '../../features/cart/components/CartModal';
+import { DeviceRegisterModal } from '../../features/devices/components/DeviceRegisterModal';
 
 export const UserLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,6 +15,9 @@ export const UserLayout = () => {
   const { user, logout } = useAuthStore();
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  const [isDeviceModalOpen, setIsDeviceModalOpen] = useState(false);
+  const { devices, fetchUserDevices, hasFetched } = useDevicesStore();
 
   const [cart, setCart] = useState(null);
   const [cartCount, setCartCount] = useState(0);
@@ -36,11 +41,15 @@ export const UserLayout = () => {
   useEffect(() => {
     if (user) {
       refreshCart();
+      const currentUserId = user?.uid || user?.id || user?._id || localStorage.getItem('userId');
+      if (currentUserId) {
+        fetchUserDevices(currentUserId);
+      }
     } else {
       setCart(null);
       setCartCount(0);
     }
-  }, [user]);
+  }, [user, fetchUserDevices]);
 
   const handleUpdateQuantity = async (productId, quantity) => {
     const userId = user?.id || user?._id;
@@ -165,6 +174,15 @@ export const UserLayout = () => {
               ))}
             </div>
 
+            {/* Desktop Add Device Icon */}
+            <button
+              onClick={() => setIsDeviceModalOpen(true)}
+              title="Registrar Dispositivo"
+              className="relative p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300 focus:outline-none border border-transparent hover:border-white/20 mr-2 flex items-center justify-center"
+            >
+              <Cpu size={22} />
+            </button>
+
             {/* Desktop Shopping Cart Icon */}
             <button
               onClick={() => setIsCartModalOpen(true)}
@@ -237,6 +255,12 @@ export const UserLayout = () => {
             {/* Mobile Shopping Cart and menu button */}
             <div className="md:hidden flex items-center gap-2">
               <button
+                onClick={() => setIsDeviceModalOpen(true)}
+                className="relative p-2 rounded-full text-slate-400 hover:text-white hover:bg-[#062452] focus:outline-none flex items-center justify-center"
+              >
+                <Cpu size={22} />
+              </button>
+              <button
                 onClick={() => setIsCartModalOpen(true)}
                 className="relative p-2 rounded-full text-slate-400 hover:text-white hover:bg-[#062452] focus:outline-none flex items-center justify-center"
               >
@@ -295,7 +319,9 @@ export const UserLayout = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-        <Outlet context={{ cart, cartCount, refreshCart }} />
+        {hasFetched && devices.length === 0 ? null : (
+          <Outlet context={{ cart, cartCount, refreshCart }} />
+        )}
       </main>
 
       <footer className="bg-[#020617] border-t border-white/5 py-6 mt-auto">
@@ -311,6 +337,20 @@ export const UserLayout = () => {
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onCheckout={handleCheckout}
+      />
+
+      {/* Device Registration Modals */}
+      {hasFetched && devices.length === 0 && (
+        <DeviceRegisterModal 
+          isOpen={true} 
+          isDismissible={false} 
+        />
+      )}
+
+      <DeviceRegisterModal 
+        isOpen={isDeviceModalOpen} 
+        onClose={() => setIsDeviceModalOpen(false)} 
+        isDismissible={true} 
       />
     </div>
   );
