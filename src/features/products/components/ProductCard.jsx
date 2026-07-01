@@ -1,7 +1,10 @@
+/**
+ * @module ProductCard
+ * @description Rediseño premium E-commerce con insignias flotantes, imágenes asimétricas interactivas, 
+ * y botones de acción con barra de escaneo dinámica animada (scale-x).
+ */
 import React, { useState } from 'react';
-import { Card } from '../../../shared/components/ui/Card';
-import { Button } from '../../../shared/components/ui/Button';
-import { ShoppingCart, Check, Info, Box } from 'lucide-react';
+import { ShoppingCart, Check, Box } from 'lucide-react';
 
 export const ProductCard = ({ product, onAddToCart }) => {
   const [isAdding, setIsAdding] = useState(false);
@@ -24,82 +27,112 @@ export const ProductCard = ({ product, onAddToCart }) => {
   };
 
   const isOutOfStock = stock <= 0;
-
-  // Visual variants depending on product type
   const isDevice = productType === 'device';
-  const typeBadgeStyles = isDevice
-    ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-    : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-
-  const cardBorderColor = isDevice ? 'border-t-blue-500' : 'border-t-emerald-500';
+  
+  // Colores Sci-Fi dinámicos según tipo
+  const mainColor = isDevice ? 'cyan' : 'emerald';
+  const glowColor = isDevice ? 'rgba(6,182,212,0.3)' : 'rgba(16,185,129,0.3)';
+  const gradientClass = isDevice ? 'from-cyan-500 to-blue-500' : 'from-emerald-500 to-green-500';
+  const textClass = isDevice ? 'text-cyan-400' : 'text-emerald-400';
 
   return (
-    <Card hover className={`flex flex-col h-full border-t-4 ${cardBorderColor} transition-all duration-300 relative overflow-hidden`}>
-      {/* Decorative top-right blur highlight */}
-      <div className={`absolute top-0 right-0 w-24 h-24 ${isDevice ? 'bg-blue-500/5' : 'bg-emerald-500/5'} blur-2xl rounded-full pointer-events-none`} />
+    <div className={`group relative bg-[#121827]/80 backdrop-blur-xl border border-white/10 p-1 flex flex-col transition-all duration-700 hover:-translate-y-2 
+      rounded-tr-[3rem] rounded-bl-[3rem] rounded-tl-2xl rounded-br-2xl overflow-hidden cursor-default`}
+      style={{ boxShadow: `0 20px 60px -15px ${glowColor}` }}
+    >
+      {/* Glow Hover Background */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-tr-[3rem] rounded-bl-[3rem] rounded-tl-2xl rounded-br-2xl`} style={{ padding: '1px' }}>
+        <div className="w-full h-full bg-[#121827]/95 backdrop-blur-3xl rounded-tr-[3rem] rounded-bl-[3rem] rounded-tl-2xl rounded-br-2xl" />
+      </div>
 
-      {/* Product Image or Placeholder */}
-      <div className="relative w-full h-44 rounded-xl bg-slate-950/60 border border-white/5 mb-4 flex items-center justify-center overflow-hidden group">
-        {image ? (
-          <img
-            src={image}
-            alt={name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex flex-col items-center gap-2 text-slate-500">
-            <Box size={40} className="stroke-1" />
-            <span className="text-xs">Sin imagen</span>
+      <div className="relative z-10 flex flex-col h-full p-4">
+        
+        {/* Hologram Image Area */}
+        <div className="relative w-full h-48 rounded-[2rem] rounded-tr-[1rem] rounded-bl-[1rem] bg-[#090D17]/80 border border-white/5 mb-5 flex items-center justify-center overflow-hidden group/img">
+          {image ? (
+            <img
+              src={image}
+              alt={name}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-110 opacity-90 group-hover/img:opacity-100"
+            />
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-slate-500">
+              <Box size={40} className="stroke-1 opacity-50" />
+              <span className="text-[10px] uppercase tracking-widest font-bold">Sin Datos Visuales</span>
+            </div>
+          )}
+          
+          {/* Overlay Grid Line */}
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay pointer-events-none" />
+          
+          {/* Type Badge */}
+          <span className={`absolute top-3 right-3 text-[9px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-white/10 bg-black/50 backdrop-blur-md ${textClass} shadow-[0_0_15px_rgba(0,0,0,0.5)]`}>
+            {isDevice ? 'Hardware' : 'Bio-Químico'}
+          </span>
+        </div>
+
+        {/* Content */}
+        <div className="flex justify-between items-start mb-3 gap-2">
+          <h3 className="text-xl font-black text-white capitalize line-clamp-1 tracking-tight group-hover:text-white transition-colors" title={name}>
+            {name}
+          </h3>
+          <span className="bg-slate-900/80 px-3 py-1 rounded-xl border border-white/5 text-white font-black text-lg whitespace-nowrap shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
+            Q {price?.toFixed(2)}
+          </span>
+        </div>
+
+        {/* Console Log Description */}
+        <div className="bg-black/40 rounded-xl p-3 mb-5 flex-grow border border-white/5 relative overflow-hidden">
+          <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${gradientClass} opacity-50`} />
+          <p className="text-slate-400 text-[11px] leading-relaxed line-clamp-2 font-mono pl-2">
+            &gt; {description || 'Descripción no indexada.'}
+          </p>
+        </div>
+
+        {/* Stock & Action */}
+        <div className="mt-auto relative z-10 flex flex-col gap-3">
+          
+          {/* Stock Meter */}
+          <div className="bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/5 flex items-center justify-between">
+             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Unidades Disponibles</span>
+             <div className="flex items-center gap-2">
+               <span className={`text-sm font-black ${isOutOfStock ? 'text-rose-500' : stock <= 5 ? 'text-amber-400' : 'text-slate-200'}`}>
+                 {isOutOfStock ? 'Agotado' : stock}
+               </span>
+               {!isOutOfStock && <span className={`w-2 h-2 rounded-full ${stock <= 5 ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />}
+             </div>
           </div>
-        )}
-        <span className={`absolute top-3 right-3 text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${typeBadgeStyles}`}>
-          {isDevice ? 'Dispositivo' : 'Fertilizante'}
-        </span>
+
+          {/* Sci-Fi Add to Cart Button */}
+          <button
+            onClick={handleAddClick}
+            disabled={isOutOfStock || isAdding}
+            className={`relative overflow-hidden w-full py-3.5 rounded-2xl flex items-center justify-center gap-2 text-sm font-black uppercase tracking-widest transition-all duration-300 border
+              ${added 
+                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
+                : isOutOfStock 
+                  ? 'bg-rose-500/10 text-rose-500/50 border-rose-500/10 cursor-not-allowed'
+                  : `bg-gradient-to-r ${gradientClass} text-slate-900 border-transparent shadow-[0_0_20px_${glowColor}] hover:shadow-[0_0_40px_${glowColor}]`
+              } group/btn`}
+          >
+            {added ? (
+              <>
+                <Check size={18} strokeWidth={3} className="text-emerald-400" />
+                <span>Enlazado al Carrito</span>
+              </>
+            ) : isOutOfStock ? (
+              <span>Sin Stock</span>
+            ) : (
+              <>
+                {/* Boton animado scale-x */}
+                <div className="absolute inset-0 h-full w-full bg-white/20 scale-x-0 group-hover/btn:scale-x-100 origin-left transition-transform duration-500 ease-out" />
+                <ShoppingCart size={18} strokeWidth={2.5} className="relative z-10" />
+                <span className="relative z-10">Adquirir Suministro</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
-
-      <div className="flex justify-between items-start mb-2 gap-2">
-        <h3 className="text-lg font-bold text-slate-200 capitalize line-clamp-1" title={name}>
-          {name}
-        </h3>
-        <span className="text-amber-400 font-extrabold text-lg whitespace-nowrap">
-          Q {price?.toFixed(2)}
-        </span>
-      </div>
-
-      <p className="text-slate-400 text-sm mb-4 flex-grow line-clamp-3 leading-relaxed">
-        {description || 'Sin descripción disponible.'}
-      </p>
-
-      {/* Stock level info */}
-      <div className="flex items-center justify-between text-xs text-slate-400 mb-4 bg-slate-950/40 p-2.5 rounded-lg border border-white/5">
-        <span>Disponibles:</span>
-        <span className={`font-bold ${isOutOfStock ? 'text-rose-500' : stock <= 5 ? 'text-amber-500' : 'text-emerald-500'}`}>
-          {isOutOfStock ? 'Agotado' : `${stock} unidades`}
-        </span>
-      </div>
-
-      {/* Action Button */}
-      <Button
-        onClick={handleAddClick}
-        disabled={isOutOfStock || isAdding}
-        isLoading={isAdding}
-        variant={added ? 'secondary' : 'primary'}
-        className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs transition-all duration-300"
-      >
-        {added ? (
-          <>
-            <Check size={16} className="text-emerald-400" />
-            <span>¡Agregado!</span>
-          </>
-        ) : isOutOfStock ? (
-          <span>Sin stock</span>
-        ) : (
-          <>
-            <ShoppingCart size={16} />
-            <span>Agregar al carrito</span>
-          </>
-        )}
-      </Button>
-    </Card>
+    </div>
   );
 };
