@@ -1,8 +1,13 @@
+/**
+ * @module CropsList
+ * @description Rediseño de la vista del catálogo de cultivos con estilo de "Base de Datos Botánica",
+ * implementando inputs de búsqueda cristalizados y orbes lumínicos decorativos de fondo.
+ */
 import React, { useEffect, useState } from 'react';
 import { useCropStore } from '../store/useCropStore';
 import { CropCard } from './CropCard';
 import { Loader } from '../../../shared/components/ui/Loader';
-import { Search, Leaf } from 'lucide-react';
+import { Search, Leaf, Sprout } from 'lucide-react';
 import { Input } from '../../../shared/components/ui/Input';
 
 export const CropsList = () => {
@@ -21,53 +26,80 @@ export const CropsList = () => {
   
   if (error) {
     return (
-      <div className="bg-red-50 text-red-500 p-4 rounded-lg text-center">
-        <p>{error}</p>
+      <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-6 rounded-3xl text-center max-w-lg mx-auto mt-20 backdrop-blur-xl">
+        <p className="font-bold">{error}</p>
         <button 
           onClick={fetchCrops}
-          className="mt-2 text-sm underline hover:text-red-700"
+          className="mt-4 bg-rose-500/20 px-6 py-2 rounded-full font-bold hover:bg-rose-500/30 transition-colors"
         >
-          Reintentar
+          Reintentar Conexión
         </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 animate-fadeIn">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-200">Catálogo de Cultivos</h2>
-          <p className="text-slate-400 mt-1">Explora información detallada sobre diversos cultivos.</p>
-        </div>
-        
-        <div className="relative w-full md:w-72">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search size={18} className="text-gray-400" />
-          </div>
-          <Input 
-            type="text"
-            placeholder="Buscar cultivo..."
-            className="pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#070A11] text-white p-4 sm:p-8 rounded-[3rem] relative overflow-hidden font-sans border border-white/5 shadow-2xl animate-fadeIn">
+      {/* Sci-Fi Global Backgrounds */}
+      <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-cyan-600/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-emerald-900/10 to-transparent pointer-events-none" />
 
-      {filteredCrops.length === 0 ? (
-        <div className="text-center py-12 bg-slate-900/20 rounded-xl border border-dashed border-slate-700">
-          <Leaf size={48} className="mx-auto text-slate-600 mb-3" />
-          <p className="text-slate-400 font-medium">No se encontraron cultivos.</p>
-          {searchTerm && <p className="text-sm text-slate-500 mt-1">Intenta con otro término de búsqueda.</p>}
+      <div className="relative z-10 max-w-[1600px] mx-auto space-y-10">
+        
+        {/* Header Ultra-Moderno */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white/5 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center gap-5">
+            <div className="relative flex items-center justify-center w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-emerald-400 to-green-500 p-[2px]">
+              <div className="w-full h-full bg-[#090D17] rounded-[1.4rem] flex items-center justify-center">
+                <Sprout className="text-emerald-400" size={28} />
+              </div>
+              <div className="absolute inset-0 bg-emerald-400 blur-xl opacity-30 rounded-full" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">
+                Base de Datos Botánica
+              </h2>
+              <p className="text-[11px] text-emerald-400/80 font-bold tracking-widest uppercase mt-1">
+                Catálogo Genético de Cultivos
+              </p>
+            </div>
+          </div>
+          
+          <div className="relative w-full md:w-80 group">
+            <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity" />
+            <div className="relative flex items-center bg-[#090D17]/80 backdrop-blur-md border border-white/10 rounded-full overflow-hidden focus-within:border-emerald-500/50 transition-colors">
+              <div className="pl-5">
+                <Search size={18} className="text-emerald-500" />
+              </div>
+              <Input 
+                type="text"
+                placeholder="Escanear base de datos..."
+                className="w-full bg-transparent border-0 text-slate-200 placeholder-slate-500 focus:ring-0 py-4 pl-3"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredCrops.map((crop) => (
-            <CropCard key={crop.id || crop._id || crop.nombre} crop={crop} />
-          ))}
-        </div>
-      )}
+
+        {filteredCrops.length === 0 ? (
+          <div className="text-center py-32 relative bg-[#121827]/40 backdrop-blur-md rounded-[3rem] border border-white/5">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none rounded-[3rem]" />
+            <div className="relative z-10">
+              <Leaf size={64} className="mx-auto text-slate-700 mb-6" />
+              <h3 className="text-3xl font-black text-slate-200 mb-2">No se encontraron genotipos</h3>
+              {searchTerm && <p className="text-slate-400 font-medium">No hay coincidencias para "{searchTerm}" en la base de datos central.</p>}
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            {filteredCrops.map((crop) => (
+              <CropCard key={crop.id || crop._id || crop.nombre} crop={crop} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
