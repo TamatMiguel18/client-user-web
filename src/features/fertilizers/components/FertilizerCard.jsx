@@ -12,7 +12,7 @@ export const FertilizerCard = ({ fertilizer }) => {
         </span>
       </div>
       
-      <p className="text-slate-400 text-sm mb-4 flex-grow line-clamp-2">
+      <p className="text-slate-400 text-sm mb-4 flex-grow whitespace-pre-wrap">
         {fertilizer.description || 'Sin descripción detallada.'}
       </p>
 

@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-main-blue: #08316d;
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   --main-blue: #08316d;
@@ -19,8 +21,14 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #020617; /* Dark background like admin */
-  color: #e2e8f0; /* text-slate-200 */
+  background-color: #f8fafc; /* Light bg-slate-50 */
+  color: #0f172a; /* Light text-slate-900 */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background-color: #020617; /* Dark background */
+  color: #e2e8f0; /* Dark text-slate-200 */
 }
 
 @keyframes fadeIn {

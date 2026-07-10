@@ -10,6 +10,7 @@ import { VerifyEmail } from '../../features/auth/pages/VerifyEmail';
 import { AuthPage } from '../../features/auth/pages/AuthPage';
 import { ReportsList } from '../../features/reports/components/Reports';
 import { AlertsList } from '../../features/alerts/components/AlertsList';
+import { FarmerProfile } from '../../features/profile/components/FarmerProfile';
 
 export const AppRouter = () => {
   return (
@@ -31,6 +32,7 @@ export const AppRouter = () => {
 
         <Route path="reports" element={<ReportsList />} />
         <Route path="alerts" element={<AlertsList />} />
+        <Route path="profile" element={<FarmerProfile />} />
         
         {/* Catch all route */}
         <Route path="*" element={<Navigate to="/fields" replace />} />

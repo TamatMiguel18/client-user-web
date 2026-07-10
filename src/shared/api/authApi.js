@@ -70,3 +70,7 @@ export const verifyEmail = async (token) => {
 export const resendVerification = async (email) => {
     return await axiosAuth.post('/api/v1/auth/resend-verification', { email });
 };
+
+export const getProfile = async () => {
+    return await axiosAuth.get('/api/v1/auth/profile');
+};

@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, LogOut, ChevronDown, Package, ShoppingCart, Cpu, AlertCircle, AlertTriangle } from 'lucide-react';
+import { Leaf, Map, FlaskConical, Calculator, Menu, X, UserCircle, LogOut, ChevronDown, Package, ShoppingCart, Cpu, AlertCircle, AlertTriangle, Sun, Moon } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/store/authStore';
 import { useDevicesStore } from '../../features/devices/store/devicesStore';
+import { useThemeStore } from '../../shared/store/useThemeStore';
 import imgLogo from '../../assets/smartGrowGt_Logo.png';
 import defaultAvatarImg from '../../assets/user_icon.png';
 import { getCart, updateCartItem, removeFromCart, createOrder } from '../../shared/api';
@@ -13,6 +14,7 @@ export const UserLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  const { theme, toggleTheme } = useThemeStore();
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -130,9 +132,9 @@ export const UserLayout = () => {
     : defaultAvatarImg;
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 flex flex-col font-sans w-full">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-200 flex flex-col font-sans w-full transition-colors duration-300">
       {/* Top Navbar */}
-      <nav className="bg-slate-900/40 backdrop-blur-xl border-b border-white/5 sticky top-0 z-40 w-full">
+      <nav className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 sticky top-0 z-40 w-full transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
 
@@ -165,8 +167,8 @@ export const UserLayout = () => {
                   to={item.path}
                   className={({ isActive }) =>
                     `px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${isActive
-                      ? 'bg-white/10 text-white'
-                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                      ? 'bg-slate-200 dark:bg-white/10 text-emerald-600 dark:text-white'
+                      : 'text-slate-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-white/5 hover:text-emerald-500 dark:hover:text-white'
                     }`
                   }
                 >
@@ -198,12 +200,21 @@ export const UserLayout = () => {
               )}
             </button>
 
-            {/* Profile Dropdown */}
+            {/* Profile Dropdown & Theme Toggle */}
             <div className="hidden lg:flex items-center gap-4" ref={dropdownRef}>
+              
+              <button
+                onClick={toggleTheme}
+                title="Cambiar Tema"
+                className="relative p-2 rounded-full text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 transition-all duration-300 focus:outline-none"
+              >
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-2 p-1 rounded-full hover:bg-white/10 transition-all duration-300 focus:outline-none border border-transparent hover:border-white/20"
+                  className="flex items-center gap-2 p-1 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 transition-all duration-300 focus:outline-none border border-transparent dark:hover:border-white/20"
                 >
                   <div className="relative">
                     <img
@@ -221,12 +232,25 @@ export const UserLayout = () => {
                 </button>
 
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-3 w-64 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl animate-in fade-in zoom-in duration-200 z-50 overflow-hidden">
-                    <div className="px-5 py-4 bg-white/5 border-b border-white/5">
-                      <p className="font-bold text-white text-sm truncate">{user?.name || 'Usuario'}</p>
-                      <p className="text-xs text-slate-400 truncate font-light">{user?.email}</p>
+                  <div className="absolute right-0 mt-3 w-64 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl animate-in fade-in zoom-in duration-200 z-50 overflow-hidden">
+                    <div className="px-5 py-4 bg-slate-100/50 dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
+                      <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{user?.name || 'Usuario'}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate font-light">{user?.email}</p>
                     </div>
                     <ul className="p-2 space-y-1">
+                      <li>
+                        <button
+                          onClick={() => {
+                            setIsProfileOpen(false);
+                            navigate('/profile');
+                          }}
+                          className="flex items-center gap-3 w-full p-3 rounded-2xl text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all duration-200 group"
+                        >
+                          <UserCircle size={18} className="group-hover:translate-x-1 transition-transform" />
+                          <span className="text-sm font-bold">Mi Perfil Agrícola</span>
+                        </button>
+                      </li>
+                      <div className="h-px bg-slate-200 dark:bg-white/5 my-1" />
                       {navItems.slice(4).map((item) => (
                         <li key={item.path}>
                           <button
@@ -234,7 +258,7 @@ export const UserLayout = () => {
                               setIsProfileOpen(false);
                               navigate(item.path);
                             }}
-                            className="flex items-center gap-3 w-full p-3 rounded-2xl text-slate-400 hover:bg-slate-500/20 hover:text-slate-500 transition-all duration-200 group"
+                            className="flex items-center gap-3 w-full p-3 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-500/20 hover:text-emerald-500 dark:hover:text-slate-500 transition-all duration-200 group"
                           >
                             <div className="group-hover:translate-x-1 transition-transform">
                               {React.cloneElement(item.icon, { size: 18 })}
@@ -243,11 +267,11 @@ export const UserLayout = () => {
                           </button>
                         </li>
                       ))}
-                      <div className="h-px bg-white/5 my-1" />
+                      <div className="h-px bg-slate-200 dark:bg-white/5 my-1" />
                       <li>
                         <button
                           onClick={handleLogout}
-                          className="flex items-center gap-3 w-full p-3 rounded-2xl text-rose-400 hover:bg-rose-500/20 hover:text-rose-500 transition-all duration-200 group"
+                          className="flex items-center gap-3 w-full p-3 rounded-2xl text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 hover:text-rose-600 dark:hover:text-rose-500 transition-all duration-200 group"
                         >
                           <LogOut size={18} className="group-hover:translate-x-1 transition-transform" />
                           <span className="text-sm font-bold">Cerrar sesión</span>
@@ -290,8 +314,32 @@ export const UserLayout = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-[#062452] shadow-lg absolute w-full z-50">
+          <div className="lg:hidden bg-slate-100 dark:bg-[#062452] shadow-lg absolute w-full z-50">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              <button
+                onClick={() => {
+                  toggleTheme();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center gap-3 text-emerald-600 dark:text-emerald-400 hover:bg-slate-200 dark:hover:bg-white/10"
+              >
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                Cambiar Tema
+              </button>
+              <div className="h-px bg-slate-200 dark:bg-white/10 my-2"></div>
+              <NavLink
+                to="/profile"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `block px-3 py-2 rounded-md text-base font-medium flex items-center gap-3 ${isActive
+                    ? 'bg-slate-200 dark:bg-white/10 text-emerald-600 dark:text-white'
+                    : 'text-slate-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-white/5 hover:text-emerald-600 dark:hover:text-white'
+                  }`
+                }
+              >
+                <UserCircle size={20} />
+                Mi Perfil
+              </NavLink>
               {navItems.map((item) => (
                 <NavLink
                   key={item.path}
@@ -299,8 +347,8 @@ export const UserLayout = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={({ isActive }) =>
                     `block px-3 py-2 rounded-md text-base font-medium flex items-center gap-3 ${isActive
-                      ? 'bg-white/10 text-white'
-                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                      ? 'bg-slate-200 dark:bg-white/10 text-emerald-600 dark:text-white'
+                      : 'text-slate-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-white/5 hover:text-emerald-600 dark:hover:text-white'
                     }`
                   }
                 >
@@ -331,7 +379,7 @@ export const UserLayout = () => {
         )}
       </main>
 
-      <footer className="bg-[#020617] border-t border-white/5 py-6 mt-auto">
+      <footer className="bg-slate-100 dark:bg-[#020617] border-t border-slate-200 dark:border-white/5 py-6 mt-auto transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500">
           &copy; {new Date().getFullYear()} SmartGrow. Todos los derechos reservados.
         </div>

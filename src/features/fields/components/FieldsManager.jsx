@@ -9,8 +9,10 @@ import { Button } from '../../../shared/components/ui/Button';
 import { Loader } from '../../../shared/components/ui/Loader';
 import { FieldFormModal } from './FieldFormModal';
 import { FieldDetailsModal } from './FieldDetailsModal';
-import { MapPin, Plus, Trash2, Edit2, Eye, Power, Leaf } from 'lucide-react';
+import { MapPin, Plus, Trash2, Edit2, Eye, Power, Leaf, CloudSun, Droplets, Wind, Thermometer } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
+import { Skeleton } from '../../../shared/components/ui/Skeleton';
 
 // Componente SVG para un Anillo Circular de Estado
 const StatusRing = ({ status }) => {
@@ -56,14 +58,49 @@ const OrganicWaves = () => (
   </div>
 );
 
+import { getProfile } from '../../../shared/api';
+import axios from 'axios';
+
 export const FieldsManager = () => {
   const { fields, isLoading, error, fetchFields, addField, editField, removeField, activateField } = useFieldStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingField, setEditingField] = useState(null);
   const [detailsField, setDetailsField] = useState(null);
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
     fetchFields();
+
+    const fetchWeather = async () => {
+      try {
+        const res = await getProfile();
+        if (res.data?.data?.municipality) {
+          const municipality = res.data.data.municipality;
+          const geoRes = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${municipality}&count=1&language=es&format=json`);
+          
+          if (geoRes.data?.results?.length > 0) {
+            const { latitude, longitude } = geoRes.data.results[0];
+            const weatherRes = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=relative_humidity_2m,precipitation_probability`);
+            
+            const current = weatherRes.data.current_weather;
+            const currentHour = new Date().getHours();
+            const humidity = weatherRes.data.hourly?.relative_humidity_2m?.[currentHour] || 65;
+            const rainProb = weatherRes.data.hourly?.precipitation_probability?.[currentHour] || 0;
+            
+            setWeather({
+              temp: current.temperature,
+              wind: current.windspeed,
+              humidity: humidity,
+              rain: rainProb,
+              location: municipality
+            });
+          }
+        }
+      } catch(e) {
+        console.error("Error fetching weather", e);
+      }
+    };
+    fetchWeather();
   }, [fetchFields]);
 
   const allFields = fields || [];
@@ -103,10 +140,18 @@ export const FieldsManager = () => {
     }
   };
 
-  if (isLoading && allFields.length === 0) return <Loader />;
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  };
 
   return (
-    <div className="min-h-screen bg-[#090D17] text-white p-4 sm:p-8 rounded-[3rem] relative overflow-hidden font-sans shadow-2xl border border-white/5">
+    <div className="min-h-screen bg-transparent text-slate-900 dark:text-white p-4 sm:p-8 rounded-[3rem] relative overflow-hidden font-sans shadow-2xl border border-slate-200 dark:border-white/5 transition-colors duration-300">
       {/* Sci-Fi Global Backgrounds */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-600/10 blur-[150px] rounded-full pointer-events-none" />
@@ -115,19 +160,19 @@ export const FieldsManager = () => {
       <div className="relative z-10 max-w-[1600px] mx-auto space-y-10">
         
         {/* Header Ultra-Moderno */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 bg-white/5 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 bg-white/40 dark:bg-white/5 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-colors duration-300">
           <div className="flex items-center gap-6">
             <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-[2px]">
-              <div className="w-full h-full bg-[#090D17] rounded-full flex items-center justify-center">
+              <div className="w-full h-full bg-slate-50 dark:bg-[#090D17] rounded-full flex items-center justify-center">
                 <Leaf className="text-emerald-400" size={28} />
               </div>
               <div className="absolute inset-0 bg-emerald-400 blur-xl opacity-30 rounded-full" />
             </div>
             <div>
-              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">
+              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 dark:from-white dark:to-slate-400 tracking-tight">
                 Control de Parcelas
               </h2>
-              <p className="text-sm text-cyan-400/80 font-semibold tracking-wide uppercase mt-1">
+              <p className="text-sm text-cyan-700 dark:text-cyan-400/80 font-semibold tracking-wide uppercase mt-1">
                 Monitoreo Activo
               </p>
             </div>
@@ -135,7 +180,7 @@ export const FieldsManager = () => {
 
           <Button 
             onClick={() => { setEditingField(null); setIsModalOpen(true); }} 
-            className="group relative overflow-hidden rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-900 font-extrabold px-8 py-4 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_50px_rgba(16,185,129,0.5)] transition-all"
+            className="group relative overflow-hidden rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-white dark:text-slate-900 font-extrabold px-8 py-4 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_50px_rgba(16,185,129,0.5)] transition-all"
           >
             <span className="relative z-10 flex items-center gap-2">
               <Plus size={20} strokeWidth={3} /> Nueva Parcela
@@ -144,18 +189,84 @@ export const FieldsManager = () => {
           </Button>
         </div>
 
+        {/* Resumen Agrometeorológico del Agricultor */}
+        <div className="bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl p-6 border border-slate-200 dark:border-white/5 shadow-sm mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+              <CloudSun className="text-amber-500" size={28} />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">Condiciones Actuales</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {weather ? `Clima en ${weather.location}` : 'Pronóstico local estimado para tus terrenos'}
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full md:w-auto flex-grow justify-end max-w-2xl">
+            <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-white/5 flex items-center gap-3">
+              <Thermometer className="text-rose-500" size={20} />
+              <div>
+                <p className="text-[10px] text-slate-500 font-bold uppercase">Temperatura</p>
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  {weather ? `${weather.temp}°C` : '26°C'}
+                </p>
+              </div>
+            </div>
+            <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-white/5 flex items-center gap-3">
+              <Droplets className="text-blue-500" size={20} />
+              <div>
+                <p className="text-[10px] text-slate-500 font-bold uppercase">Humedad</p>
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  {weather ? `${weather.humidity}%` : '65%'}
+                </p>
+              </div>
+            </div>
+            <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-white/5 flex items-center gap-3">
+              <Wind className="text-cyan-500" size={20} />
+              <div>
+                <p className="text-[10px] text-slate-500 font-bold uppercase">Viento</p>
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  {weather ? `${weather.wind} km/h` : '12 km/h'}
+                </p>
+              </div>
+            </div>
+            <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-white/5 flex items-center gap-3">
+              <CloudSun className="text-amber-500" size={20} />
+              <div>
+                <p className="text-[10px] text-slate-500 font-bold uppercase">Lluvia</p>
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  {weather ? `${weather.rain}%` : '10%'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Dashboard Grid */}
-        {allFields.length === 0 ? (
-          <div className="text-center py-32 relative">
-            <h3 className="text-3xl font-black text-slate-200 mb-4">Sin datos de terreno</h3>
-            <p className="text-slate-400 font-medium">Inicia desplegando tu primer cuadrante agrícola.</p>
+        {isLoading && allFields.length === 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            {[1, 2, 3].map((n) => (
+              <Skeleton key={n} className="h-[350px] w-full rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl" />
+            ))}
+          </div>
+        ) : allFields.length === 0 ? (
+          <div className="text-center py-32 relative animate-fadeIn">
+            <h3 className="text-3xl font-black text-slate-900 dark:text-slate-200 mb-4">Sin datos de terreno</h3>
+            <p className="text-slate-600 dark:text-slate-400 font-medium">Inicia desplegando tu primer cuadrante agrícola.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
+          >
             {allFields.map((field, index) => (
-              <div 
+              <motion.div 
+                variants={itemVariants}
                 key={field._id || field.id || `field-${index}`} 
-                className={`group relative bg-[#121827]/80 backdrop-blur-xl border border-white/10 p-6 flex flex-col transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.2)]
+                className={`group relative bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-6 flex flex-col transition-colors duration-700 hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.2)]
                 rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden
                 ${field.isActive === false ? 'opacity-50 grayscale hover:grayscale-0' : ''}`}
               >
@@ -165,24 +276,24 @@ export const FieldsManager = () => {
                 {/* Header Card */}
                 <div className="flex justify-between items-start mb-8 relative z-10">
                   <div>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-3 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-3 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
                       Sector {index + 1}
                     </span>
-                    <h3 className="text-2xl font-black text-white tracking-tight">{field.name}</h3>
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{field.name}</h3>
                   </div>
                   
                   {/* Controles Glassmorphism */}
-                  <div className="flex flex-col gap-2 bg-[#090D17]/50 p-2 rounded-2xl border border-white/5 backdrop-blur-md">
-                    <button onClick={() => { setEditingField(field); setIsModalOpen(true); }} className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-all" title="Editar">
+                  <div className="flex flex-col gap-2 bg-slate-100/80 dark:bg-[#090D17]/50 p-2 rounded-2xl border border-slate-200 dark:border-white/5 backdrop-blur-md">
+                    <button onClick={() => { setEditingField(field); setIsModalOpen(true); }} className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl transition-all" title="Editar">
                       <Edit2 size={16} strokeWidth={2.5} />
                     </button>
                     {field.isActive !== false ? (
-                      <button onClick={() => handleDelete(field.id || field._id)} className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all" title="Desactivar">
+                      <button onClick={() => handleDelete(field.id || field._id)} className="p-2 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/10 rounded-xl transition-all" title="Desactivar">
                         <Trash2 size={16} strokeWidth={2.5} />
                       </button>
                     ) : (
-                      <button onClick={() => handleActivate(field.id || field._id)} className="p-2 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-xl transition-all" title="Activar">
+                      <button onClick={() => handleActivate(field.id || field._id)} className="p-2 text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/10 rounded-xl transition-all" title="Activar">
                         <Power size={16} strokeWidth={2.5} />
                       </button>
                     )}
@@ -190,15 +301,15 @@ export const FieldsManager = () => {
                 </div>
 
                 {/* Data Widget Area */}
-                <div className="flex items-center justify-between mb-8 relative z-10 bg-black/20 rounded-[2rem] p-4 border border-white/5">
+                <div className="flex items-center justify-between mb-8 relative z-10 bg-slate-50/80 dark:bg-black/20 rounded-[2rem] p-4 border border-slate-200 dark:border-white/5">
                   <div className="flex flex-col gap-4">
                     <div>
                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Cultivo Activo</p>
-                      <p className="text-lg font-bold text-cyan-300">{field.crop?.name || 'Suelo Virgen'}</p>
+                      <p className="text-lg font-bold text-cyan-700 dark:text-cyan-300">{field.crop?.name || 'Suelo Virgen'}</p>
                     </div>
                     <div>
                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Superficie</p>
-                      <p className="text-2xl font-black text-white">{field.area} <span className="text-sm font-medium text-slate-500">Ha</span></p>
+                      <p className="text-2xl font-black text-slate-900 dark:text-white">{field.area} <span className="text-sm font-medium text-slate-500">Ha</span></p>
                     </div>
                   </div>
                   
@@ -211,8 +322,8 @@ export const FieldsManager = () => {
 
                 {/* Footer Card */}
                 <div className="mt-auto relative z-10">
-                  <div className="flex items-center gap-2 text-slate-400 mb-6 bg-white/5 p-3 rounded-xl border border-white/5">
-                    <MapPin size={16} className="text-rose-400 shrink-0" />
+                  <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 mb-6 bg-slate-100 dark:bg-white/5 p-3 rounded-xl border border-slate-200 dark:border-white/5">
+                    <MapPin size={16} className="text-rose-500 dark:text-rose-400 shrink-0" />
                     <span className="text-xs font-medium truncate">{field.location}</span>
                   </div>
 
@@ -224,9 +335,9 @@ export const FieldsManager = () => {
                     <span className="tracking-wide">Analítica Completa</span>
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
         <FieldFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSaveField} initialData={editingField} />
