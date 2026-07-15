@@ -59,13 +59,42 @@ export const FarmerProfile = () => {
 
     for (let i = 0; i < plan.fases.length; i++) {
         const fase = plan.fases[i];
-        // Extraer número de días del string "0 a 30" -> tomamos el límite superior
-        const match = fase.rango_dias.match(/a (\d+)/) || fase.rango_dias.match(/- (\d+)/);
-        const limitDays = match ? parseInt(match[1]) : 30; // fallback a 30
         
-        const phaseStart = cumulativeDays;
-        const phaseEnd = limitDays;
-        
+        const isPercentage = fase.rango_dias.includes('%');
+        const numbers = fase.rango_dias.match(/\d+/g);
+
+        let phaseStart = cumulativeDays;
+        let phaseEnd = cumulativeDays + 30; // fallback a 30 días si no se encuentran números
+
+        if (numbers && numbers.length >= 2) {
+             let startVal = parseInt(numbers[numbers.length - 2]);
+             let endVal = parseInt(numbers[numbers.length - 1]);
+             
+             // Si el texto incluye % o parece que 100 es el 100% del ciclo
+             if (isPercentage || (endVal === 100 && plan.total_ciclo_dias && plan.total_ciclo_dias !== 100)) {
+                 startVal = Math.round((startVal / 100) * plan.total_ciclo_dias);
+                 endVal = Math.round((endVal / 100) * plan.total_ciclo_dias);
+             }
+             
+             phaseStart = startVal;
+             phaseEnd = endVal;
+        } else if (numbers && numbers.length === 1) {
+             let endVal = parseInt(numbers[0]);
+             if (isPercentage || (endVal === 100 && plan.total_ciclo_dias && plan.total_ciclo_dias !== 100)) {
+                 endVal = Math.round((endVal / 100) * plan.total_ciclo_dias);
+             }
+             phaseEnd = endVal;
+        }
+
+        // Si por error de formato start es mayor que end
+        if (phaseStart > phaseEnd) {
+             const temp = phaseStart;
+             phaseStart = phaseEnd;
+             phaseEnd = temp;
+        }
+
+        cumulativeDays = phaseEnd + 1;
+
         if (daysElapsed >= phaseStart && daysElapsed <= phaseEnd) {
             currentPhase = fase;
             if (i + 1 < plan.fases.length) {
@@ -76,7 +105,7 @@ export const FarmerProfile = () => {
             }
             break;
         } else if (daysElapsed < phaseStart) {
-            // Aún no empieza la primera fase (ej. si sembró en el futuro)
+            // Aún no empieza esta fase (ej. sembrada en futuro)
             nextPhase = fase;
             daysUntilNext = phaseStart - daysElapsed;
             break;
@@ -219,12 +248,40 @@ export const FarmerProfile = () => {
                           />
                         </div>
 
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <div className="flex gap-3 items-start">
                             <Sprout className="text-emerald-500 mt-0.5 shrink-0" size={18} />
-                            <div>
+                            <div className="w-full">
                               <p className="text-xs text-slate-500 font-bold uppercase">Fase Actual</p>
-                              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{phaseInfo.currentPhase?.nombre_fase || 'En espera...'}</p>
+                              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">{phaseInfo.currentPhase?.nombre_fase || 'En espera...'}</p>
+                              
+                              {/* Fertilizantes y detalles de la Fase Actual */}
+                              {phaseInfo.currentPhase?.fertilizantes_a_aplicar && phaseInfo.currentPhase.fertilizantes_a_aplicar.length > 0 && (
+                                <div className="mt-3">
+                                  <p className="text-[10px] text-slate-500 font-bold uppercase mb-2">Fertilizantes a aplicar:</p>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                                    {phaseInfo.currentPhase.fertilizantes_a_aplicar.map((f, i) => (
+                                      <div key={i} className="bg-white/60 dark:bg-slate-800/40 rounded-lg p-2 border border-slate-200 dark:border-white/5 flex flex-col justify-between">
+                                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-1">{f.nombre}</span>
+                                        <div className="flex justify-between items-center text-[10px]">
+                                          <span className="text-slate-700 dark:text-slate-300 font-medium">{f.cantidad_kg_total_fase} kg</span>
+                                          <span className="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-1.5 py-0.5 rounded font-bold">
+                                            {f.cantidad_sacos_fase} sacos
+                                          </span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {phaseInfo.currentPhase?.instrucciones_agronomicas && (
+                                <div className="bg-emerald-50/50 dark:bg-emerald-900/10 rounded-lg p-2 border border-emerald-100 dark:border-emerald-500/10">
+                                  <p className="text-xs text-slate-600 dark:text-slate-400 whitespace-pre-wrap leading-relaxed">
+                                    {phaseInfo.currentPhase.instrucciones_agronomicas}
+                                  </p>
+                                </div>
+                              )}
                             </div>
                           </div>
                           
