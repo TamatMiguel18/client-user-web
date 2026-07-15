@@ -4,3 +4,4 @@ export * from './productsApi';
 export * from './cartApi';
 export * from './ordersApi';
 export * from './devicesApi';
+export * from './aiApi';
