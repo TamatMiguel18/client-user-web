@@ -33,6 +33,7 @@ export const RegisterForm = ({ onLogin }) => {
             if (data.address) formData.append("address", data.address);
             if (data.department) formData.append("department", data.department);
             if (data.municipality) formData.append("municipality", data.municipality);
+            if (data.village) formData.append("village", data.village);
             if (data.farmerType) formData.append("farmerType", data.farmerType);
             if (data.mainCrop) formData.append("mainCrop", data.mainCrop);
 
@@ -230,6 +231,22 @@ export const RegisterForm = ({ onLogin }) => {
                             placeholder="Ej: Flores"
                             className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-3 pl-12 pr-4 outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/40 transition-all text-white text-sm font-medium"
                             {...register("municipality")}
+                        />
+                    </div>
+                </div>
+
+                {/* Aldea/Sector */}
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Aldea o Sector</label>
+                    <div className="relative group">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors">
+                            <MapPin size={18} />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Ej: Caserío El Mango"
+                            className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-3 pl-12 pr-4 outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/40 transition-all text-white text-sm font-medium"
+                            {...register("village")}
                         />
                     </div>
                 </div>
