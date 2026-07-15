@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AppRouter } from './app/router/AppRouter';
 import { useThemeStore } from './shared/store/useThemeStore';
+import { FloatingChat } from './shared/components/AIAssistant/FloatingChat';
 
 function App() {
   const { initTheme } = useThemeStore();
@@ -38,6 +39,7 @@ function App() {
         }}
       />
       <AppRouter />
+      <FloatingChat />
     </BrowserRouter>
   );
 }
