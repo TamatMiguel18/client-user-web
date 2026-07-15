@@ -99,7 +99,7 @@ export const ProductsList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#070A11] text-white p-4 sm:p-8 rounded-[3rem] relative overflow-hidden font-sans border border-white/5 shadow-2xl animate-fadeIn">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#070A11] text-slate-900 dark:text-white p-4 sm:p-8 rounded-[3rem] relative overflow-hidden font-sans border border-slate-200 dark:border-white/5 shadow-xl dark:shadow-2xl animate-fadeIn">
       {/* Sci-Fi Global Backgrounds */}
       <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-cyan-500/5 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none" />
@@ -107,7 +107,7 @@ export const ProductsList = () => {
       <div className="relative z-10 max-w-[1600px] mx-auto space-y-10">
         
         {/* Header HUD */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white/5 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white dark:bg-white/5 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
           
           <div className="flex items-center gap-5">
             <div className="relative flex items-center justify-center w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-cyan-400 to-blue-600 p-[2px]">
@@ -117,7 +117,7 @@ export const ProductsList = () => {
               <div className="absolute inset-0 bg-cyan-400 blur-xl opacity-30 rounded-full" />
             </div>
             <div>
-              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">
+              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 dark:from-white dark:to-slate-400 tracking-tight">
                 Terminal de Suministros
               </h2>
               <p className="text-[11px] text-cyan-400/80 font-bold tracking-widest uppercase mt-1">
@@ -128,13 +128,13 @@ export const ProductsList = () => {
 
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
             {/* Filter Tabs Glassmorphism */}
-            <div className="flex border border-white/10 p-1 bg-[#090D17]/80 backdrop-blur-md rounded-2xl w-full sm:w-auto">
+            <div className="flex border border-slate-200 dark:border-white/10 p-1 bg-white dark:bg-[#090D17]/80 backdrop-blur-md rounded-2xl w-full sm:w-auto shadow-sm">
               <button
                 onClick={() => setTypeFilter('all')}
                 className={`flex-1 sm:px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300 ${
                   typeFilter === 'all'
-                    ? 'bg-cyan-500 text-slate-900 shadow-[0_0_15px_rgba(6,182,212,0.4)]'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-cyan-500 text-white dark:text-slate-900 shadow-[0_0_15px_rgba(6,182,212,0.4)]'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
                 }`}
               >
                 Global
@@ -143,8 +143,8 @@ export const ProductsList = () => {
                 onClick={() => setTypeFilter('device')}
                 className={`flex-1 sm:px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300 ${
                   typeFilter === 'device'
-                    ? 'bg-blue-500 text-slate-900 shadow-[0_0_15px_rgba(59,130,246,0.4)]'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-blue-500 text-white dark:text-slate-900 shadow-[0_0_15px_rgba(59,130,246,0.4)]'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
                 }`}
               >
                 Hardware
@@ -153,8 +153,8 @@ export const ProductsList = () => {
                 onClick={() => setTypeFilter('fertilizer')}
                 className={`flex-1 sm:px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300 ${
                   typeFilter === 'fertilizer'
-                    ? 'bg-emerald-500 text-slate-900 shadow-[0_0_15px_rgba(16,185,129,0.4)]'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-emerald-500 text-white dark:text-slate-900 shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
                 }`}
               >
                 Bio-Químicos
@@ -163,15 +163,15 @@ export const ProductsList = () => {
             
             {/* Search Input HUD */}
             <div className="relative w-full sm:w-64 group">
-              <div className="absolute inset-0 bg-cyan-500/20 blur-xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity" />
-              <div className="relative flex items-center bg-[#090D17]/80 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden focus-within:border-cyan-500/50 transition-colors">
+              <div className="absolute inset-0 bg-cyan-500/10 dark:bg-cyan-500/20 blur-xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity" />
+              <div className="relative flex items-center bg-white dark:bg-[#090D17]/80 backdrop-blur-md border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden focus-within:border-cyan-500/50 transition-colors shadow-sm">
                 <div className="pl-5">
                   <Search size={18} className="text-cyan-500" />
                 </div>
                 <Input 
                   type="text"
                   placeholder="ID de Suministro..."
-                  className="w-full bg-transparent border-0 text-slate-200 placeholder-slate-500 focus:ring-0 py-4 pl-3"
+                  className="w-full bg-transparent border-0 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-0 py-4 pl-3"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -182,12 +182,12 @@ export const ProductsList = () => {
 
         {/* Product Grid */}
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-32 relative bg-[#121827]/40 backdrop-blur-md rounded-[3rem] border border-white/5">
-             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none rounded-[3rem]" />
+          <div className="text-center py-32 relative bg-white/50 dark:bg-[#121827]/40 backdrop-blur-md rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-sm">
+             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02] dark:opacity-5 pointer-events-none rounded-[3rem]" />
              <div className="relative z-10">
-               <ShoppingBag size={64} className="mx-auto text-slate-700 mb-6" />
-               <h3 className="text-3xl font-black text-slate-200 mb-2">Inventario Vacío</h3>
-               <p className="text-slate-400 font-medium">No hay suministros disponibles con los parámetros actuales.</p>
+               <ShoppingBag size={64} className="mx-auto text-slate-400 dark:text-slate-700 mb-6" />
+               <h3 className="text-3xl font-black text-slate-800 dark:text-slate-200 mb-2">Inventario Vacío</h3>
+               <p className="text-slate-500 dark:text-slate-400 font-medium">No hay suministros disponibles con los parámetros actuales.</p>
              </div>
            </div>
         ) : (
