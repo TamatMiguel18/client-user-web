@@ -56,14 +56,16 @@ const Sparkline = () => (
   </svg>
 );
 
+import { WeatherWidget } from './WeatherWidget';
+
 export const Dashboard = () => {
   return (
     <div className="min-h-[85vh] bg-slate-50 dark:bg-slate-900 p-4 sm:p-8 rounded-3xl relative overflow-hidden font-sans border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
       <div className="relative z-10 max-w-7xl mx-auto space-y-8">
         
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-white/5 transition-colors duration-300">
-          <div className="flex items-center gap-4">
+        {/* Header and Weather */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1 flex flex-col justify-center items-start gap-4 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-white/5 transition-colors duration-300 h-full">
             <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
               <Activity className="text-emerald-500" size={24} />
             </div>
@@ -75,6 +77,10 @@ export const Dashboard = () => {
                 Sincronización de datos óptima
               </p>
             </div>
+          </div>
+          
+          <div className="lg:col-span-2">
+            <WeatherWidget />
           </div>
         </div>
 
