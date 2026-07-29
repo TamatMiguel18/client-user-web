@@ -6,7 +6,10 @@ export const UserLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: <Leaf size={20} /> },
+    { name: 'Cultivos', path: '/crops', icon: <Leaf size={20} /> },
+    { name: 'Fertilizantes', path: '/fertilizers', icon: <FlaskConical size={20} /> },
+    { name: 'Recomendaciones', path: '/recommendations', icon: <Calculator size={20} /> },
+    { name: 'Mis Parcelas', path: '/fields', icon: <Map size={20} /> },
   ];
 
   return (
